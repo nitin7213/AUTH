@@ -1,6 +1,7 @@
 import UserModel from "../model/Users.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import sendMailCallback from "../services/nodemailer.js";
 
 // Handle Register Request
 const handleSignUp = async (req, res) => {
@@ -60,7 +61,7 @@ const handleLogin = async (req, res) => {
   return res.json({ status: true, message: "login successfully" });
 };
 
-//User verification using token
+// User verification using token
 const verifyUser = async (req, res, next) => {
   try {
     const token = req.cookies.token;
@@ -88,19 +89,48 @@ const successMsg = (req, res) => {
   return res.json({ status: true, message: "authorized" });
 };
 
-//Handle Forget Password
+// Handle Forget Password
 const handleForgetPass = async (req, res) => {
   const { email } = req.body;
 
   try {
     const user = await UserModel.findOne({ email });
     if (!user) return res.json({ message: "user not registered" });
+
+    const token = jwt.sign({ id: user._id }, process.env.KEY, {
+      expiresIn: "5m",
+    });
+    // Sending Mail
+    await sendMailCallback({ email, token });
+    // If mail is successfully sent, send response
+    res.json({ status: true, message: "email sent" });
   } catch (err) {
     console.log(err);
+    // If there's an error, send error response
+    res.status(500).json({ status: false, message: "error sending email" });
   }
 };
 
-//Handle the Logout
+// Handle the Reset Password
+const handleResetPass = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  try {
+    const decoded = jwt.verify(token, process.env.KEY);
+
+    const id = decoded.id;
+    const hashPassword = await bcrypt.hash(password, 10);
+
+    await UserModel.findByIdAndUpdate({ _id: id }, { password: hashPassword });
+    return res.json({ status: true, message: "updated password" });
+  } catch (err) {
+    console.error("Error resetting password:", err);
+    return res.status(400).json({ message: "invalid token" });
+  }
+};
+
+// Handle the Logout
 const handleLogout = (req, res) => {
   // Clear token cookie
   res.clearCookie("token");
@@ -114,4 +144,5 @@ export {
   verifyUser,
   successMsg,
   handleForgetPass,
+  handleResetPass,
 };

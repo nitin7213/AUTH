@@ -4,6 +4,7 @@ import Login from "../pages/Login";
 import Signup from "../pages/SignUp";
 import Dashboard from "../pages/Dashboard";
 import ForgetPass from "../pages/ForgetPass";
+import ResetPass from "../pages/ResetPass";
 import App from "../App";
 
 const Router = () => {
@@ -27,6 +28,10 @@ const Router = () => {
         {
           path: "/forgetpass",
           element: <ForgetPass />,
+        },
+        {
+          path: "/resetpass/:token",
+          element: <ResetPass />,
         },
         {
           path: "/dashboard",

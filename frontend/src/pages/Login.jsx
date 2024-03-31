@@ -16,7 +16,7 @@ const Login = () => {
     setEye(!eye);
   };
 
-  axios.defaults.withCredentials = true; // Necessary
+  axios.defaults.withCredentials = true; // Necessary for accessing cookies for auth
 
   // Handle Login
   const handleLogin = async (e) => {

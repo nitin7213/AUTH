@@ -30,6 +30,7 @@ const handleSignUp = async (req, res) => {
   }
 };
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Handle Login Request
 const handleLogin = async (req, res) => {
   const { email, password } = req.body;
@@ -60,6 +61,7 @@ const handleLogin = async (req, res) => {
   return res.json({ status: true, message: "login successfully" });
 };
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //User verification using token
 const verifyUser = async (req, res, next) => {
   try {
@@ -88,6 +90,7 @@ const successMsg = (req, res) => {
   return res.json({ status: true, message: "authorized" });
 };
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Handle Forget Password
 const handleForgetPass = async (req, res) => {
   const { email } = req.body;
@@ -100,6 +103,7 @@ const handleForgetPass = async (req, res) => {
   }
 };
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Handle the Logout
 const handleLogout = (req, res) => {
   // Clear token cookie

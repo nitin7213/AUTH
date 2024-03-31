@@ -5,14 +5,15 @@ import { useNavigate } from "react-router-dom";
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  axios.defaults.withCredentials = true;
+  axios.defaults.withCredentials = true; // Necessary for accessing cookies for auth
 
   useEffect(() => {
-    async () => {
+    const verifyUser = async () => {
       try {
-        const response = axios.get("http://localhost:3000/auth/verify");
-        if (response.data.status) console.log("User verified");
-        else {
+        const response = await axios.get("http://localhost:3000/auth/verify");
+        if (response.data.status) {
+          console.log("User verified");
+        } else {
           console.log("User not verified");
           navigate("/");
         }
@@ -22,6 +23,8 @@ const Dashboard = () => {
         navigate("/");
       }
     };
+
+    verifyUser();
   }, [navigate]);
 
   //Handling Logout btn

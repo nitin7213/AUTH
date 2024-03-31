@@ -3,23 +3,24 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const SignUp = () => {
-  //Navigation to login page after clicking Register
   const navigate = useNavigate();
 
-  //Entries
+  // State variables
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState(""); // New state variable for confirm password
+  const [showPassword, setShowPassword] = useState(false); // Password visibility toggle
 
-  //Password Eye
-  const [eye, setEye] = useState("password");
-  const handleshowPass = () => {
-    setEye(!eye);
-  };
-
-  //handle submit
+  // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault(); // to prevent default refresh (submission works but refreshes so doesn't show the console)
+    e.preventDefault();
+
+    // Check if password and confirm password match
+    if (password !== confirmPassword) {
+      alert("Password and confirm password do not match");
+      return;
+    }
 
     try {
       const response = await axios.post("http://localhost:3000/auth/signup", {
@@ -27,8 +28,8 @@ const SignUp = () => {
         email,
         password,
       });
-      console.log(response);
 
+      console.log(response);
       navigate("/login");
     } catch (err) {
       console.log(err);
@@ -50,7 +51,6 @@ const SignUp = () => {
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="w-full flex items-center justify-between py-5">
               <hr className="w-full bg-gray-400" />
-
               <hr className="w-full bg-gray-400" />
             </div>
             <div>
@@ -107,8 +107,28 @@ const SignUp = () => {
                   id="password"
                   name="password"
                   value={password}
-                  type={eye ? "password" : "text"}
-                  autoComplete="current-password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  required
+                  className="px-3 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm focus:ring-0 focus:border-gray-700"
+                />
+              </div>
+            </div>
+            <div>
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Confirm Password
+              </label>
+              <div className="mt-2">
+                <input
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={confirmPassword}
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
                   required
                   className="px-3 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm focus:ring-0 focus:border-gray-700"
                 />
@@ -119,7 +139,7 @@ const SignUp = () => {
                 <input
                   id="show_password"
                   name="show_password"
-                  onClick={handleshowPass}
+                  onClick={() => setShowPassword(!showPassword)}
                   type="checkbox"
                   className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                 />
@@ -131,15 +151,14 @@ const SignUp = () => {
                 </label>
               </div>
               <div className="text-sm">
-                <a
+                <Link
                   to="/forgot-password"
                   className="font-medium text-gray-900 hover:text-gray-700"
                 >
                   Forgot password?
-                </a>
+                </Link>
               </div>
             </div>
-
             <div>
               <button
                 type="submit"
@@ -149,7 +168,6 @@ const SignUp = () => {
               </button>
             </div>
           </form>
-
           <p className="mt-10 text-center text-sm text-gray-500">
             Already have an account?{" "}
             <Link

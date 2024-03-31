@@ -1,6 +1,7 @@
 import UserModel from "../model/Users.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import sendMailCallback from "../services/nodemailer.js";
 
 // Handle Register Request
 const handleSignUp = async (req, res) => {
@@ -98,8 +99,18 @@ const handleForgetPass = async (req, res) => {
   try {
     const user = await UserModel.findOne({ email });
     if (!user) return res.json({ message: "user not registered" });
+
+    const token = jwt.sign({ id: user._id }, process.env.KEY, {
+      expiresIn: "5m",
+    });
+    // Sending Mail
+    await sendMailCallback({ email, token });
+    // If mail is successfully sent, send response
+    res.json({ status: true, message: "email sent" });
   } catch (err) {
     console.log(err);
+    // If there's an error, send error response
+    res.status(500).json({ status: false, message: "error sending email" });
   }
 };
 
@@ -118,4 +129,5 @@ export {
   verifyUser,
   successMsg,
   handleForgetPass,
+  handleResetPass,
 };

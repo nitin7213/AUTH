@@ -18,21 +18,18 @@ const ForgetPass = () => {
       if (response.data.status) {
         alert("Check your Email for reset Password !");
         navigate("/login");
+      } else {
+        alert("Failed to send reset password email");
       }
     } catch (error) {
       console.error("Error initiating forget password:", error);
-      // Handle error, e.g., display error message to the user
+      alert("Error initiating forget password. Please try again.");
     }
   };
 
   return (
     <div>
       <>
-        {/* Header and Home link */}
-        <div className="text-white text-center text-3xl font-bold bg-blue-500 flex justify-center w-36 m-auto p-2 rounded-3xl cursor-pointer">
-          <Link to="/">Home</Link>
-        </div>
-
         {/* Forget password form */}
         <div className="bg-gray-200 select-none flex rounded-xl w-10/12 p-8 mt-20 mx-auto flex-col justify-center px-6 py-12 lg:px-8 md:mb-8">
           <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -77,7 +74,7 @@ const ForgetPass = () => {
 
             {/* Login link */}
             <p className="mt-10 text-center text-sm text-gray-500">
-              Aleady have an account?{" "}
+              Already have an account?{" "}
               <Link
                 to="/login"
                 className="font-semibold leading-6 text-gray-600 hover:text-gray-500"

@@ -49,32 +49,38 @@ const handleLogin = async (req, res) => {
   }
 
   // Generate JWT token
-  const token = jwt.sign({ username: user.username }, process.env.KEY, {
-    expiresIn: "1h",
+  const accessToken = jwt.sign({ username: user.username }, process.env.KEY, {
+    expiresIn: "1m",
+  });
+  const refreshToken = jwt.sign({ username: user.username }, process.env.KEY, {
+    expiresIn: "5m",
   });
 
   // Set token in cookie
-  res.cookie("token", token, {
+  res.cookie("accessToken", accessToken, { httpOnly: true, maxAge: 60000 });
+  res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     maxAge: 360000,
+    secure: true,
+    sameSite: "strict",
   });
 
   return res.json({ status: true, message: "login successfully" });
 };
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//User verification using token
+//User verification middleware using token
 const verifyUser = async (req, res, next) => {
   try {
-    const token = req.cookies.token;
-    if (!token) {
+    const accessToken = req.cookies.accessToken;
+    if (!accessToken) {
       return res
         .status(401)
         .json({ status: false, message: "No token provided" });
     }
 
     // Verify token
-    jwt.verify(token, process.env.KEY);
+    jwt.verify(accessToken, process.env.KEY);
 
     // If verification succeeds, call next to move to the next middleware/route handler
     next();
@@ -137,7 +143,7 @@ const handleResetPass = async (req, res) => {
 //Handle the Logout
 const handleLogout = (req, res) => {
   // Clear token cookie
-  res.clearCookie("token");
+  res.clearCookie("accessToken");
   return res.json({ status: true });
 };
 

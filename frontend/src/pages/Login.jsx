@@ -30,13 +30,13 @@ const Login = () => {
       });
 
       // Extract token & username from response data
-      const { token, username } = response.data;
+      const { accessToken, username } = response.data;
 
       // Store token and username in local storage
       localStorage.setItem("username", username);
 
       // Use JavaScript to set an HttpOnly cookie
-      document.cookie = `token=${token}; path=/;`;
+      document.cookie = `token=${accessToken}; path=/;`;
 
       // Redirect to home page
       navigate("/dashboard");

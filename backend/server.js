@@ -1,23 +1,21 @@
 import express from "express";
-import router from "./routes/Users.js";
+import router from "./routes/user.routes.js";
 import handleCon from "./connect.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-
-//Usually loaded at starting
 import dotenv from "dotenv";
+
+// Load environment variables
 dotenv.config();
 
-//Create app
+// Create app
 const app = express();
 
 // Connect to MongoDB
-handleCon("mongodb://127.0.0.1:27017/auth");
+handleCon(process.env.MONGO_URI);
 
-//Middlewares
-
+// Middlewares
 app.use(express.json()); // Body Parsing Middleware
-
 app.use(cookieParser()); // Cookie Parsing Middleware
 
 // CORS Middleware

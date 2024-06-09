@@ -1,44 +1,31 @@
+import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 
 const Login = () => {
-  //Navigation to Dashboard page after clicking Login
   const navigate = useNavigate();
-
-  // Entries
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  // Password Eye
   const [eye, setEye] = useState("password");
+
   const handleshowPass = () => {
     setEye(!eye);
   };
 
-  axios.defaults.withCredentials = true; // Necessary for accessing cookies for auth
+  axios.defaults.withCredentials = true;
 
-  // Handle Login
   const handleLogin = async (e) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
 
     try {
-      // Send login request to server
       const response = await axios.post("http://localhost:3000/auth/login", {
         email,
         password,
       });
 
-      // Extract token & username from response data
-      const { accessToken, username } = response.data;
+      const { accessToken } = response.data;
 
-      // Store token and username in local storage
-      localStorage.setItem("username", username);
-
-      // Use JavaScript to set an HttpOnly cookie
-      document.cookie = `token=${accessToken}; path=/;`;
-
-      // Redirect to home page
+      document.cookie = `accessToken=${accessToken}; path=/;`; // Updated cookie name
       navigate("/dashboard");
     } catch (err) {
       console.log(err);
@@ -50,7 +37,7 @@ const Login = () => {
       <div className="text-white text-center text-3xl font-bold bg-blue-500 flex justify-center w-36 m-auto p-2 rounded-3xl cursor-pointer">
         <Link to="/">Home</Link>
       </div>
-      <div className="bg-gray-200 select-none flex rounded-xl  w-10/12   p-8 mt-20 mx-auto flex-col justify-center px-6 py-12 lg:px-8 md:mb-8">
+      <div className="bg-gray-200 select-none flex rounded-xl w-10/12 p-8 mt-20 mx-auto flex-col justify-center px-6 py-12 lg:px-8 md:mb-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="mt-5 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Login to your account
